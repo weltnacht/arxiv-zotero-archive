@@ -11,7 +11,7 @@ Use this skill for repeatable arXiv literature tracking and Zotero archiving. Ke
 
 1. Clarify or infer the search scope: keywords, arXiv query syntax, date range, and target Zotero collection path or folder name.
 2. Search arXiv and export local artifacts with `scripts/arxiv_search_export.py`.
-3. Review/filter the metadata. Use the abstracts to produce the user's requested keyword and main-content table; the script's Markdown table is a starting artifact, not a substitute for careful summarization when the user asks for analysis.
+3. Review/filter the metadata. Use the abstracts to produce the user's requested keyword and summary table; the script's Markdown table is a starting artifact, not a substitute for careful summarization when the user asks for analysis. Apply the table language and format rules below before delivering the table.
 4. Ask the user to open Zotero and select the target collection if it is not already selected. The Zotero Connector can save only into Zotero's current selected collection.
 5. Import with `scripts/zotero_connector_archive.py`, which uses the same local Connector service that browser connectors call (`http://127.0.0.1:23119`).
 6. Verify the target collection: expected count, no target-folder duplicates, item type `preprint`, and linked PDF attachments.
@@ -47,6 +47,30 @@ Run verification only:
 ```bash
 python scripts/zotero_connector_archive.py --metadata references/results_metadata.json --collection-path "Parent/Child" --verify-only
 ```
+
+## Table language and format
+
+Determine the Markdown table language from the user's request:
+
+- Use the Chinese table version when the prompt asks for Chinese, 中文, 中文表格, Chinese output, or otherwise clearly requests Chinese content.
+- Use the English table version when the prompt asks for English, 英文, English output, or otherwise clearly requests English content.
+- Default to the English table version when the prompt does not specify Chinese or English.
+
+For the Chinese table version:
+
+- Use this exact header: `| # | 日期 | arXiv | 标题 | 关键词 | 简记 |`.
+- Keep `标题` as the original English arXiv title; do not translate the title.
+- Write `关键词` in Chinese, using concise topic phrases separated by Chinese semicolons.
+- Write `简记` in Chinese as a short one-sentence summary based on the abstract. Do not paste or mechanically truncate the abstract; keep it compact enough for quick scanning.
+
+For the English table version:
+
+- Use this exact header: `| # | Date | arXiv | Title | Keywords | Note |`.
+- Keep `Title` as the original English arXiv title.
+- Write `Keywords` in English, using concise topic phrases separated by semicolons.
+- Write `Note` in English as a short one-sentence summary based on the abstract. Do not paste or mechanically truncate the abstract; keep it compact enough for quick scanning.
+
+For both versions, keep the date and arXiv link columns, preserve the record ordering from the export, and include one row per metadata record.
 
 ## Zotero rules
 

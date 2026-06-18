@@ -27,7 +27,7 @@ This guide is for everyday use: use it when you want to search arXiv by topic an
 
 ```text
 用 $arxiv-zotero-archive 搜索 2026 年 6 月关于 [关键词] 的 arXiv 新文章，
-生成 RIS/BibTeX/表格，并归档到 Zotero 的 [目标文件夹路径]。
+生成 RIS/BibTeX/中文表格，并归档到 Zotero 的 [目标文件夹路径]。
 ```
 
 更具体一点：
@@ -35,15 +35,32 @@ This guide is for everyday use: use it when you want to search arXiv by topic an
 ```text
 用 $arxiv-zotero-archive 检索 2026-06-01 到 2026-06-30 arXiv 上
 包含 "topological spin texture" 或 "skyrmion" 的预印本，
-总结每篇关键词和主要内容，导入到 Zotero 文件夹
+生成中文表格，整理每篇论文的关键词和简记，导入到 Zotero 文件夹
 1-Spintronics/arxiv26/arxiv26_6。
 ```
+
+### 表格语言和格式
+
+如果提示词没有说明中文或英文，默认生成英文表格。需要中文表格时，请在提示词中明确写“中文表格”或“中文内容”。
+
+中文表格使用固定表头：
+
+```text
+| # | 日期 | arXiv | 标题 | 关键词 | 简记 |
+```
+
+规则：
+
+- `标题` 保留 arXiv 原始英文标题，不翻译。
+- `关键词` 用中文短语，使用中文分号分隔。
+- `简记` 用中文一句话概括摘要，要求简练，不粘贴或机械截断英文摘要。
+- 日期和 arXiv 链接保持不变，顺序沿用导出 metadata 的顺序。
 
 ### 标准流程
 
 1. 确认检索范围：关键词、日期范围、是否需要复杂检索式。
 2. 从 arXiv API 抓取结果，生成本地文件。
-3. 人工或模型辅助筛选：去掉不相关论文，整理关键词与主要内容。
+3. 人工或模型辅助筛选：去掉不相关论文，按语言要求整理关键词与简记表格。
 4. 打开 Zotero，并选中目标 collection。
 5. 运行导入脚本：先 dry-run，再正式导入。
 6. 做最终校验：数量、重复、条目类型、PDF 附件、链接附件状态。
@@ -87,7 +104,7 @@ python scripts/zotero_connector_archive.py --metadata references/skyrmion_arxiv_
 | `<prefix>_metadata.json` | 核心 metadata；后续导入 Zotero 依赖它 |
 | `<prefix>.ris` | 可批量导入 Zotero/EndNote 的备用文件 |
 | `<prefix>.bib` | BibTeX 备用文件 |
-| `<prefix>_table.md` | 初步表格，包含日期、标题、关键词、摘要压缩版 |
+| `<prefix>_table.md` | Markdown 表格；默认英文，或按提示词生成中文；简记/Note 要短 |
 | `zotero_connector_import_log.jsonl` | 导入日志，记录成功、跳过、错误 |
 
 ### Zotero 归档规则
@@ -154,8 +171,8 @@ You can ask:
 
 ```text
 Use $arxiv-zotero-archive to search arXiv papers from June 2026 on [keyword],
-generate RIS/BibTeX/table outputs, and archive them into the Zotero collection
-[collection path].
+generate RIS/BibTeX and a concise English table, and archive them into the
+Zotero collection [collection path].
 ```
 
 More specific example:
@@ -163,15 +180,40 @@ More specific example:
 ```text
 Use $arxiv-zotero-archive to search arXiv from 2026-06-01 to 2026-06-30
 for preprints containing "topological spin texture" or "skyrmion".
-Summarize keywords and main content for each paper, then import them into
-Zotero collection 1-Spintronics/arxiv26/arxiv26_6.
+Summarize English keywords and a short note for each paper, then import them
+into Zotero collection 1-Spintronics/arxiv26/arxiv26_6.
 ```
+
+### Table Language And Format
+
+If the prompt does not specify Chinese or English, generate the English table by default. Generate the Chinese table only when the prompt explicitly asks for Chinese, 中文, 中文表格, or Chinese content.
+
+English tables use this exact header:
+
+```text
+| # | Date | arXiv | Title | Keywords | Note |
+```
+
+Rules:
+
+- Keep `Title` as the original English arXiv title.
+- Write `Keywords` in concise English topic phrases separated by semicolons.
+- Write `Note` as one short English sentence based on the abstract. Do not paste or mechanically truncate the abstract.
+- Keep date and arXiv link columns unchanged, and preserve the metadata export order.
+
+Chinese tables use this exact header:
+
+```text
+| # | 日期 | arXiv | 标题 | 关键词 | 简记 |
+```
+
+For Chinese tables, keep `标题` as the original English arXiv title, write `关键词` in Chinese, and write `简记` as a concise Chinese one-sentence summary.
 
 ### Standard Workflow
 
 1. Confirm the search scope: keywords, date range, and whether a raw arXiv query is needed.
 2. Fetch results from the arXiv API and write local artifacts.
-3. Review or filter the records, then refine the keyword and summary table.
+3. Review or filter the records, then refine the keyword and short-note table in the requested language.
 4. Open Zotero and select the target collection.
 5. Run the importer: dry-run first, then live import.
 6. Verify the final collection: count, duplicates, item type, PDF attachments, and linked-file status.
@@ -215,7 +257,7 @@ python scripts/zotero_connector_archive.py --metadata references/skyrmion_arxiv_
 | `<prefix>_metadata.json` | Canonical metadata used for Zotero import |
 | `<prefix>.ris` | Backup import file for Zotero or EndNote |
 | `<prefix>.bib` | BibTeX backup |
-| `<prefix>_table.md` | Initial table with date, title, keywords, and shortened abstract |
+| `<prefix>_table.md` | Markdown table; English by default or Chinese when requested; notes must be concise |
 | `zotero_connector_import_log.jsonl` | Append-only import log |
 
 ### Zotero Archiving Rules

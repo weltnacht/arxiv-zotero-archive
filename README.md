@@ -4,10 +4,12 @@ A Codex skill for searching arXiv by topic and archiving matching preprints into
 
 It exports reusable citation files, builds review tables, imports new arXiv records through Zotero Connector, checks for duplicates across the whole Zotero library, preserves formal-publication metadata in `Extra`, and verifies linked PDF attachments.
 
+Current release: `1.2`.
+
 ## Features
 
 - Search arXiv by keywords, raw arXiv API query, and date range.
-- Export `metadata.json`, RIS, BibTeX, and Markdown summary tables.
+- Export `metadata.json`, RIS, BibTeX, and concise Markdown tables in English by default or Chinese when requested.
 - Import records as Zotero `preprint` items through Zotero Connector.
 - Check the whole Zotero library before creating new items.
 - Avoid creating duplicate Zotero items when a matching item already exists elsewhere.
@@ -45,6 +47,19 @@ Use $arxiv-zotero-archive to search arXiv for recent papers on skyrmion and arch
 4. Run the importer in dry-run mode.
 5. Import new records through Zotero Connector.
 6. Verify the Zotero collection.
+
+## Release Notes
+
+### 1.2 (2026-06-18)
+
+This release follows `1.1`.
+
+- Added explicit Markdown table language rules to the skill instructions and user guide.
+- Default table output is now English when the prompt does not specify a language.
+- Added a Chinese table mode with fixed columns: `#`, `日期`, `arXiv`, `标题`, `关键词`, `简记`.
+- Chinese table titles remain the original English arXiv titles, while `关键词` and `简记` are written in Chinese.
+- English table columns are `#`, `Date`, `arXiv`, `Title`, `Keywords`, `Note`.
+- Table notes must be concise one-sentence summaries rather than pasted or truncated abstracts.
 
 ## Command Examples
 
